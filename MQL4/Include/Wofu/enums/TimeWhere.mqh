@@ -1,0 +1,5 @@
+enum ENUM_TIME_WHERE 
+{
+   TIME_LOCAL =0,
+   TIME_SERVER=1, 
+};

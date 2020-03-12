@@ -1,0 +1,5 @@
+enum ENTRY_TYPE_ZIGZAG 
+{ 
+   ET_ZIGZAG_FIND_HIGH=0 ,
+   ET_ZIGZAG_FIND_LOW =1 ,
+};

@@ -1,2 +1,2 @@
-# fxea-ownpickdog-kd
-用KD進場
+# fxea-ownpickdog-sar
+從fxea_train_with_virus完成之初版

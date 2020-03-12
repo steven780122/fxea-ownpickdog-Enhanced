@@ -1,0 +1,57 @@
+
+int orderTypeByMA
+(
+   rulesParmMa&    rps,
+   rulesParmCommon& rpc
+)
+{
+   int fOdType=-1;
+   double FLine0=0,FLine1=0,SLine0=0,SLine1=0;
+   int    SymDigits=(int)SymbolInfoInteger(rps.symbol,SYMBOL_DIGITS);
+   //濾網模式
+   if( rpc.entryType==0 )rpc.kBarTo=rpc.kBarFr;
+
+   
+   for(int i=rpc.kBarFr;i<=rpc.kBarTo;i++)
+   {
+      #ifdef __MQL4__
+         FLine0=iMA(rps.symbol,rps.tf,rps.maPeriodF,rps.maShiftF,rps.maMethod,rps.appPrice,i);   //快線
+         FLine1=iMA(rps.symbol,rps.tf,rps.maPeriodF,rps.maShiftF,rps.maMethod,rps.appPrice,i+1); //快線
+
+         SLine0=iMA(rps.symbol,rps.tf,rps.maPeriodS,rps.maShiftS,rps.maMethod,rps.appPrice,i);   //慢線
+         SLine1=iMA(rps.symbol,rps.tf,rps.maPeriodS,rps.maShiftS,rps.maMethod,rps.appPrice,i+1); //慢線
+      #endif 
+      #ifdef __MQL5__
+         FLine0=iMAMQL4(rps.symbol,rps.tf,rps.maPeriodF,rps.maShiftF,rps.maMethod,rps.appPrice,i);   //快線
+         FLine1=iMAMQL4(rps.symbol,rps.tf,rps.maPeriodF,rps.maShiftF,rps.maMethod,rps.appPrice,i+1); //快線
+
+         SLine0=iMAMQL4(rps.symbol,rps.tf,rps.maPeriodS,rps.maShiftS,rps.maMethod,rps.appPrice,i);   //慢線
+         SLine1=iMAMQL4(rps.symbol,rps.tf,rps.maPeriodS,rps.maShiftS,rps.maMethod,rps.appPrice,i+1); //慢線
+      #endif 
+
+      if( rpc.entryType==0 )  
+      {
+              if(FLine0 > SLine0 )fOdType=ORDER_TYPE_BUY;  //黃金交叉
+         else if(FLine0 < SLine0 )fOdType=ORDER_TYPE_SELL; //死亡交叉
+         else fOdType=-1;      
+
+      }
+      else 
+      if( rpc.entryType==1 )  
+      {
+              if(FLine1 <= SLine1 && FLine0 > SLine0 )fOdType=ORDER_TYPE_BUY;  //黃金交叉
+         else if(FLine1 >= SLine1 && FLine0 < SLine0 )fOdType=ORDER_TYPE_SELL; //死亡交叉
+         else fOdType=-1;
+      }
+      else
+         return(-999);
+      
+      if( fOdType==ORDER_TYPE_BUY || fOdType==ORDER_TYPE_SELL ) break;
+   } //EOF for
+   
+
+   if( rpc.doLogger )logger(LOG_INFO,__FUNCTION__+": 判斷結果="+( (fOdType>=0)?EnumToString((ENUM_ORDER_TYPE)fOdType):(string)fOdType )+",快線="+DoubleToStr(FLine0,SymDigits)+",慢線="+DoubleToStr(SLine0,SymDigits));
+   if( rpc.resultOpp && fOdType>=0 )return(getOppOrderType((ENUM_ORDER_TYPE)fOdType));
+   return(fOdType);
+    
+}

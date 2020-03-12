@@ -1,0 +1,9 @@
+enum ENUM_ORDER_PRICE
+{ 
+   OD_PRICE_OPEN=0,
+   OD_PRICE_CLOSE=1,
+   OD_PRICE_TP=2,
+   OD_PRICE_SL=3,
+   
+
+};
